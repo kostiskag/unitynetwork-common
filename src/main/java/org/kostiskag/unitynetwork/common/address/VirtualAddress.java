@@ -55,8 +55,8 @@ public final class VirtualAddress extends NetworkAddress{
      * @throws UnknownHostException
      */
     public static VirtualAddress valueOf(int numericVAddress) throws UnknownHostException {
-        //data sanitation exists in numberTo10IpByteAddress
-        byte[] asByte = VirtualAddress.numberTo10IpByteAddress(numericVAddress);
+        //data sanitation exists in numberTo10IpByteHostAddress
+        byte[] asByte = VirtualAddress.numberTo10IpByteHostAddress(numericVAddress);
         InetAddress asInet = VirtualAddress._10IpByteToInetAddress(asByte);
         String asString = asInet.getHostAddress();
         return new VirtualAddress(asString, asByte, asInet, numericVAddress);
@@ -100,7 +100,7 @@ public final class VirtualAddress extends NetworkAddress{
      * @return
      * @throws IllegalArgumentException in cases the provided host number is below 1
      */
-    public static byte[] numberTo10IpByteAddress(int numAddr) {
+    public static byte[] numberTo10IpByteHostAddress(int numAddr) {
         if (numAddr < 1) {
             throw new IllegalArgumentException();
         }
@@ -118,12 +118,14 @@ public final class VirtualAddress extends NetworkAddress{
             (byte) (hostnum)};
     }
 
+
+
     public static InetAddress _10IpByteToInetAddress(byte[] byteAddress) throws UnknownHostException {
         return InetAddress.getByAddress(byteAddress);
     }
 
     public static String numberTo10ipAddr(int numAddr) throws UnknownHostException {
-        byte[] address = VirtualAddress.numberTo10IpByteAddress(numAddr);
+        byte[] address = VirtualAddress.numberTo10IpByteHostAddress(numAddr);
         return VirtualAddress._10IpByteToInetAddress(address).getHostAddress();
     }
 
