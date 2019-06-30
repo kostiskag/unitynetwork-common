@@ -13,44 +13,52 @@ import org.kostiskag.unitynetwork.common.calculated.NumericConstraints;
  */
 public final class VirtualAddress extends NetworkAddress{
 
-    // this is the total number of allowed hosts on network
-    // from 10.255.255.254 in byte[] (aka: the last permitted host) is substracted
-    // the number of system reserved addresses to find the number
-    public static final int MAX_INT_CAPACITY = VirtualAddress.byteTo10IpAddrNumber(new byte[] {(byte) 0x0a, (byte) 0xff, (byte) 0xff, (byte) 0xfe})
-            - NumericConstraints.SYSTEM_RESERVED_ADDRESS_NUMBER.size();
-
     private final int asInt;
 
     private VirtualAddress(String asString, byte[] asByte, InetAddress asInet, int asInt) throws UnknownHostException {
         super(asString,asByte,asInet);
+        if (!asString.startsWith(VIRTUAL_ADDRESS_PREFIX)) {
+            throw new UnknownHostException("The given ip address is not a part of the virtual network");
+        }
         this.asInt = asInt;
     }
 
+    /**
+     * Warning!!! there will not be an auto conversion here!
+     * it is safer to use valueOf(int) unless you want a specific address
+     * like a network, system or subnet address
+     *
+     * @param vAddress
+     * @return
+     * @throws UnknownHostException
+     */
     public static VirtualAddress valueOf(String vAddress) throws UnknownHostException {
-        if (vAddress.length() > NumericConstraints.MAX_STR_ADDR.size() || vAddress.length() < NumericConstraints.MIN_STR_ADDR.size()) {
-            throw new UnknownHostException("the given ip is invalid");
+        if (!NetworkAddress.validate(vAddress)) {
+            throw new UnknownHostException("The given ip is invalid");
         }
+        if (!vAddress.startsWith(VIRTUAL_ADDRESS_PREFIX)) {
+            throw new UnknownHostException("The given ip address is not a part of the virtual network");
+        }
+
         InetAddress asInet = NetworkAddress.networkAddressToInetAddress(vAddress);
         byte[] asByte = asInet.getAddress();
-        if (asByte[0] != (byte)10) {
-            throw new UnknownHostException("the given ip does not start with a 10.* network part");
-        }
         int asInt = VirtualAddress.byteTo10IpAddrNumber(asByte);
-
         return new VirtualAddress(vAddress, asByte, asInet, asInt);
     }
 
+    /**
+     * Counting starts from 1, as you say the 1st host address,
+     * the 2nd host address and so on...
+     *
+     * @param numericVAddress
+     * @return
+     * @throws UnknownHostException
+     */
     public static VirtualAddress valueOf(int numericVAddress) throws UnknownHostException {
-        if (numericVAddress <= 0 || numericVAddress > MAX_INT_CAPACITY) {
-            throw new UnknownHostException("the given ip number is invalid");
-        }
+        //data sanitation exists in numberTo10IpByteAddress
         byte[] asByte = VirtualAddress.numberTo10IpByteAddress(numericVAddress);
-        if (asByte[0] != (byte)10) {
-            throw new UnknownHostException("the given ip does not start with a 10.* network part");
-        }
         InetAddress asInet = VirtualAddress._10IpByteToInetAddress(asByte);
         String asString = asInet.getHostAddress();
-
         return new VirtualAddress(asString, asByte, asInet, numericVAddress);
     }
 
@@ -84,19 +92,30 @@ public final class VirtualAddress extends NetworkAddress{
                 '}';
     }
 
+    /**
+     * Host counting starts from 1,
+     * this method will calculate the effective host number and apply it to an address
+     *
+     * @param numAddr
+     * @return
+     * @throws IllegalArgumentException in cases the provided host number is below 1
+     */
     public static byte[] numberTo10IpByteAddress(int numAddr) {
-        byte[] networkpart = new byte[]{0x0a};
+        if (numAddr < 1) {
+            throw new IllegalArgumentException();
+        }
         int hostnum = numAddr + NumericConstraints.SYSTEM_RESERVED_ADDRESS_NUMBER.size();
+        if (hostnum > NumericConstraints.VIRTUAL_NETWORK_ADDRESS_EFFECTIVE_CAPACITY.size()) {
+            // in other words the last permitted numAddress is:
+            // NumericConstraints.VIRTUAL_NETWORK_ADDRESS_EFFECTIVE_CAPACITY.size()
+            throw new IllegalArgumentException();
+        }
 
-        byte[] hostpart = new byte[]{
-                (byte) ((hostnum) >>> 16),
-                (byte) ((hostnum) >>> 8),
-                (byte) (hostnum)};
-
-        byte[] address = new byte[4];
-        System.arraycopy(networkpart, 0, address, 0, networkpart.length);
-        System.arraycopy(hostpart, 0, address, 1, hostpart.length);
-        return address;
+        return new byte[] {
+            0x0a, //This is the network part 10.*
+            (byte) (hostnum >>> 16),
+            (byte) (hostnum >>> 8),
+            (byte) (hostnum)};
     }
 
     public static InetAddress _10IpByteToInetAddress(byte[] byteAddress) throws UnknownHostException {
@@ -110,14 +129,14 @@ public final class VirtualAddress extends NetworkAddress{
 
     //---------------reverse process----------------
     public static int byteTo10IpAddrNumber(byte[] address) {
-        byte[] hostpart = new byte[3];
-        System.arraycopy(address, 1, hostpart, 0, 3);
-        int hostnum = 0;
-        for (int i = 0; i < hostpart.length; i++) {
-            hostnum = (hostnum << 8) + (hostpart[i] & 0xff);
+        if (address[0] != 10) {
+            throw new IllegalArgumentException();
         }
-        hostnum = hostnum - NumericConstraints.SYSTEM_RESERVED_ADDRESS_NUMBER.size();
-        return hostnum;
+        int hostnum = 0;
+        for (int i = 1; i < 4; i++) {
+            hostnum = (hostnum << 8) + (address[i] & 0xff);
+        }
+        return hostnum - NumericConstraints.SYSTEM_RESERVED_ADDRESS_NUMBER.size();
     }
 
     public static int _10IpAddrToNumber(String vaddress) throws UnknownHostException {

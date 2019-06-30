@@ -20,22 +20,14 @@ public class NodeEntryTest {
 
 	@Test
 	public void testConstructor() throws UnknownHostException, IllegalAccessException {
-		var n1 = new NodeEntry<PhysicalAddress>("ouiou", PhysicalAddress.valueOf("10.0.0.1"));
+		var n1 = new NodeEntry<PhysicalAddress>("ouiou", PhysicalAddress.valueOf("11.0.0.1"));
 		var n2 = new NodeEntry<VirtualAddress>("ouiou", VirtualAddress.valueOf("10.0.0.1"));
 	}
 
 	@Test
 	public void testBadInputConstructor()  {
 		try {
-			var n = new NodeEntry<NetworkAddress>("ouiou", new NetworkAddress("10.0.0.1"));
-		} catch (UnknownHostException e) {
-			assertTrue(false);
-		} catch (IllegalAccessException e2) {
-			assertTrue(true);
-		}
-
-		try {
-			var n = new NodeEntry<NetworkAddress>("", PhysicalAddress.valueOf("10.0.0.1"));
+			var n = new NodeEntry<NetworkAddress>("", PhysicalAddress.valueOf("11.0.0.1"));
 		} catch (UnknownHostException e) {
 			assertTrue(false);
 		} catch (IllegalAccessException e) {
@@ -43,7 +35,7 @@ public class NodeEntryTest {
 		}
 
 		try {
-			var n = new NodeEntry<NetworkAddress>(null, PhysicalAddress.valueOf("10.0.0.1"));
+			var n = new NodeEntry<NetworkAddress>(null, PhysicalAddress.valueOf("11.0.0.1"));
 		} catch (UnknownHostException e) {
 			assertTrue(false);
 		} catch (IllegalAccessException e) {
@@ -54,6 +46,15 @@ public class NodeEntryTest {
 			var n = new NodeEntry<NetworkAddress>("pakis", null);
 		} catch (IllegalAccessException e) {
 			assertTrue(true);
+		}
+
+		try {
+			var n = new NodeEntry<NetworkAddress>("pakis",  PhysicalAddress.valueOf("10.0.0.1"));
+		} catch (UnknownHostException e) {
+			//unknown host triggers first
+			assertTrue(true);
+		} catch (IllegalAccessException e) {
+			assertTrue(false);
 		}
 
 		try {
@@ -69,12 +70,10 @@ public class NodeEntryTest {
 	@Test
 	public void getAddressTest() throws UnknownHostException, IllegalAccessException {
 		var n1 = new NodeEntry<VirtualAddress>("ouiou", VirtualAddress.valueOf("10.1.0.1"));
-		assertEquals(new NetworkAddress("10.1.0.1"),  n1.getAddress());
-		assertNotEquals(new NetworkAddress("10.0.0.1"),  n1.getAddress());
+		assertEquals(VirtualAddress.valueOf("10.1.0.1"),  n1.getAddress());
 
-		var n2 = new NodeEntry<PhysicalAddress>("ouiou", PhysicalAddress.valueOf("10.1.0.1"));
-		assertNotEquals(new NetworkAddress("10.0.0.1"),  n2.getAddress());
-		assertEquals(new NetworkAddress("10.1.0.1"),  n2.getAddress());
+		var n2 = new NodeEntry<PhysicalAddress>("ouiou", PhysicalAddress.valueOf("11.1.0.1"));
+		assertEquals(PhysicalAddress.valueOf("11.1.0.1"),  n2.getAddress());
 	}
 
 	@Test
@@ -82,7 +81,7 @@ public class NodeEntryTest {
 		var n1 = new NodeEntry<VirtualAddress>("ouiou", VirtualAddress.valueOf("10.1.0.1"));
 		assertEquals("ouiou",  n1.getHostname());
 
-		var n2 = new NodeEntry<PhysicalAddress>("ouiou", PhysicalAddress.valueOf("10.1.0.1"));
+		var n2 = new NodeEntry<PhysicalAddress>("ouiou", PhysicalAddress.valueOf("11.1.0.1"));
 		assertEquals("ouiou",  n2.getHostname());
 	}
 

@@ -13,6 +13,10 @@ public final class PhysicalAddress extends NetworkAddress {
     }
 
     public static PhysicalAddress valueOf(String address) throws UnknownHostException {
+        //this enforces physical addressed to not be virtual addresses
+        if (address.startsWith(VIRTUAL_ADDRESS_PREFIX)) {
+            throw new UnknownHostException("The given ip address is a part of the virtual network and may not be used outside!");
+        }
         return new PhysicalAddress(address);
     }
 
