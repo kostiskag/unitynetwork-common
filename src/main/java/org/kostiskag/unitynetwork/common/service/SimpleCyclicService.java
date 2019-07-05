@@ -7,19 +7,19 @@ public abstract class SimpleCyclicService extends Thread {
     private final int time;
     private final AtomicBoolean kill = new AtomicBoolean(false);
 
-    protected SimpleCyclicService(int time) throws IllegalAccessException {
-        if (time <= 0) {
+    protected SimpleCyclicService(int timeInSec) throws IllegalAccessException {
+        if (timeInSec <= 0) {
             throw new IllegalAccessException("time was 0 or below!");
         }
-        this.time = time;
+        this.time = timeInSec * 1000;
     }
 
     @Override
     public final void run() {
-        greetingMessage();
+        preActions();
         while (!kill.get()) {
             try {
-                sleep(time * 1000);
+                sleep(time);
             } catch (InterruptedException ex) {
                 interruptedMessage(ex);
             } finally {
@@ -27,16 +27,16 @@ public abstract class SimpleCyclicService extends Thread {
             }
             cyclicPayload();
         }
-        stopMessage();
+        postActions();
     }
 
     public final void kill(){
         kill.set(true);
     }
 
-    protected abstract void greetingMessage();
+    protected abstract void preActions();
 
-    protected abstract void stopMessage();
+    protected abstract void postActions();
 
     protected abstract void interruptedMessage(InterruptedException ex);
 
