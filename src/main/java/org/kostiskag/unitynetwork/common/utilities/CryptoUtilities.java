@@ -30,6 +30,16 @@ import javax.crypto.SecretKey;
  */
 public class CryptoUtilities {
 
+	public static final String SALT = "=UrBN&RLJ=dBshBX3HFn!S^Au?yjqV8MBx7fMyg5p6U8T^%2kp^X-sk9EQeENgVEj%DP$jNnz&JeF?rU-*meW5yFkmAvYW_=mA+E$F$xwKmw=uSxTdznSTbunBKT*-&!";
+
+	public static String storagePasswordAlgorithm(String password) throws GeneralSecurityException {
+		try {
+			return HashUtilities.SHA256(CryptoUtilities.SALT + password);
+		} catch (GeneralSecurityException e) {
+			throw e;
+		}
+	}
+
 	/**
 	 * Generates a random question
 	 * 
@@ -46,9 +56,8 @@ public class CryptoUtilities {
 	 * @return
 	 */
 	public static SecretKey generateAESSessionkey() throws GeneralSecurityException {
-		KeyGenerator AES_keygen = null;
 		try {
-			AES_keygen = KeyGenerator.getInstance("AES");
+			KeyGenerator AES_keygen = KeyGenerator.getInstance("AES");
 			AES_keygen.init(128, new SecureRandom());
 			return AES_keygen.generateKey();
 		} catch (NoSuchAlgorithmException e) {
@@ -57,9 +66,8 @@ public class CryptoUtilities {
 	}
 	
 	public static byte[] aesEncrypt(String message, SecretKey key) throws GeneralSecurityException {
-		Cipher AesCipher;
 		try {
-			AesCipher = Cipher.getInstance("AES");
+			Cipher AesCipher = Cipher.getInstance("AES");
 			AesCipher.init(Cipher.ENCRYPT_MODE, key);
 	        return AesCipher.doFinal(message.getBytes());
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
@@ -68,9 +76,8 @@ public class CryptoUtilities {
 	}
 
 	public static String aesDecrypt(byte[] chiphered, SecretKey key) throws GeneralSecurityException {
-		Cipher AesCipher;
 		try {
-			AesCipher = Cipher.getInstance("AES");
+			Cipher AesCipher = Cipher.getInstance("AES");
 			AesCipher.init(Cipher.DECRYPT_MODE, key);
 	        return new String(AesCipher.doFinal(chiphered), StandardCharsets.ISO_8859_1);
 		} catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
@@ -84,9 +91,8 @@ public class CryptoUtilities {
 	 * @return keypair
 	 */
 	public static KeyPair generateRSAkeyPair() throws GeneralSecurityException {
-		KeyPairGenerator kpg = null;
 		try {
-			kpg = KeyPairGenerator.getInstance("RSA");
+			KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
 			kpg.initialize(2048, new SecureRandom());
 			return kpg.genKeyPair();
 		} catch (NoSuchAlgorithmException e) {
@@ -95,7 +101,6 @@ public class CryptoUtilities {
 	}
 
 	public static byte[] encryptWithPublic(String text, PublicKey key) throws GeneralSecurityException {
-		byte[] cipherText = null;
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -106,7 +111,6 @@ public class CryptoUtilities {
 	}
 
 	public static String decryptWithPrivate(byte[] text, PrivateKey key) throws GeneralSecurityException {
-		byte[] dectyptedText = null;
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, key);

@@ -201,14 +201,14 @@ public class UnityPacket {
 	}
 	
 	public static byte[] buildShortRoutedAckPacket(int trackNumber) {
-		byte[] trackNumBytes = HashUtilities.UnsignedIntTo2Bytes(trackNumber);
+		byte[] trackNumBytes = HashUtilities.unsignedIntTo2ByteArray(trackNumber);
 		return buildPacket(ACK_S, trackNumBytes);
 	}
 	
 	public static byte[] buildLongRoutedAckPacket(InetAddress source, InetAddress dest, int trackNumber) {
 		byte[] sourceBytes = source.getAddress();
 		byte[] destBytes = dest.getAddress();
-		byte[] trackNumBytes = HashUtilities.UnsignedIntTo2Bytes(trackNumber);
+		byte[] trackNumBytes = HashUtilities.unsignedIntTo2ByteArray(trackNumber);
 		byte[] payload = new byte[10];
 		
 		System.arraycopy(sourceBytes,   0, payload, 0, 4);
@@ -231,8 +231,8 @@ public class UnityPacket {
 	
 	private static byte[] buildPacket(int type, byte[] payload) {
 		//build the payload before calling this one
-        byte[] version = new byte[]{HashUtilities.UnsignedIntTo1Byte(UNITYversion)};
-        byte[] typeBytes = HashUtilities.UnsignedIntToByteArray(type);
+        byte[] version = new byte[]{HashUtilities.unsignedIntTo1Byte(UNITYversion)};
+        byte[] typeBytes = HashUtilities.unsignedIntTo1ByteArray(type);
 
         byte[] packet = new byte[version.length + typeBytes.length + payload.length];
         System.arraycopy(version, 0, packet, 0, version.length);

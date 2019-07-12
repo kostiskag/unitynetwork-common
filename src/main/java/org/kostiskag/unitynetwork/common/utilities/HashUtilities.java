@@ -12,22 +12,23 @@ import java.security.NoSuchAlgorithmException;
 public class HashUtilities {
  
     public static String bytesToHexStr(byte[] data) { 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < data.length; i++) { 
-            int halfbyte = (data[i] >>> 4) & 0x0F;
-            int two_halfs = 0;
+            int halfByte = (data[i] >>> 4) & 0x0f;
+            int twoHalfs = 0;
             do { 
-                if ((0 <= halfbyte) && (halfbyte <= 9)) 
-                    buf.append((char) ('0' + halfbyte));
-                else 
-                    buf.append((char) ('a' + (halfbyte - 10)));
-                halfbyte = data[i] & 0x0F;
-            } while(two_halfs++ < 1);
+                if ((0 <= halfByte) && (halfByte <= 9)) {
+                    str.append((char) ('0' + halfByte));
+                } else {
+                    str.append((char) ('a' + (halfByte - 10)));
+                }
+                halfByte = data[i] & 0x0f;
+            } while(twoHalfs++ < 1);
         } 
-        return buf.toString();
+        return str.toString();
     } 
     
-    public static byte[] hexStrToBytes(String hexStr) {
+    public static byte[] hexStrToByteArray(String hexStr) {
         int len = hexStr.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
@@ -41,70 +42,60 @@ public class HashUtilities {
     	return new BigInteger(1, data).intValue(); 
     }
     
-    public static byte[] UnsignedIntTo4Bytes(int num) {
-    	byte[] bytes = null;
+    public static byte[] unsignedIntTo4ByteArray(int num) {
     	if (num >= 0 && num < Math.pow(2, 24)) {
-    		bytes =  new byte[] { 
+    		return new byte[] {
     		        (byte)(num >> 24),
     		        (byte)(num >> 16),
     		        (byte)(num >> 8),
-    		        (byte)num };    		
+    		        (byte) num };
     	}
-    	return bytes;
+    	return null;
     }
     
-    public static byte[] UnsignedIntTo2Bytes(int num) {
-    	byte[] bytes = null;
+    public static byte[] unsignedIntTo2ByteArray(int num) {
     	if (num >= 0 && num < Math.pow(2, 16)) {
-    		bytes =  new byte[] { 
+    		return new byte[] {
     		        (byte)(num >> 8),
     		        (byte)num };    		
     	}
-    	return bytes;
+    	return null;
     }
     
-    public static byte[] UnsignedIntToByteArray(int num) {
-    	byte[] bytes = null;
+    public static byte[] unsignedIntTo1ByteArray(int num) {
     	if (num >= 0 && num < Math.pow(2, 8)) {
-    		bytes =  new byte[] {(byte)num };    		
+    		return new byte[] {(byte)num };
     	}
-    	return bytes;
+    	return null;
     }
     
-    public static byte UnsignedIntTo1Byte(int num) {
-    	byte b = (byte) 0x00;
+    public static byte unsignedIntTo1Byte(int num) {
     	if (num >= 0 && num < Math.pow(2, 8)) {
-    		b =  (byte)num ;    		
+    		return (byte)num ;
     	}
-    	return b;
+    	return 0x00;
     }
     
     public static byte buildByteFromBits(String flags) {
     	flags = flags.replaceAll(" ", "");
-    	byte b = (byte) 0x00;
     	if (flags.length() == 8) {
-    		b = (byte) Integer.parseInt(flags, 2);
+    		return  (byte) Integer.parseInt(flags, 2);
     	}
-    	return b;
+    	return 0x00;
     }
- 
+
+    @Deprecated
     public static String MD5(String text) 
-    throws NoSuchAlgorithmException  {
-        MessageDigest md;
-        md = MessageDigest.getInstance("MD5");
-        byte[] hash = new byte[32];
+    throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("MD5");
         md.update(text.getBytes(StandardCharsets.ISO_8859_1), 0, text.length());
-        hash = md.digest();
-        return bytesToHexStr(hash);
+        return bytesToHexStr(md.digest());
     }
     
     public static String SHA256(String text) 
-    	    throws NoSuchAlgorithmException  {
-        MessageDigest md;
-        md = MessageDigest.getInstance("SHA-256");
-        byte[] hash = new byte[32];
+    	    throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
         md.update(text.getBytes(StandardCharsets.ISO_8859_1), 0, text.length());
-        hash = md.digest();
-        return bytesToHexStr(hash);
+        return bytesToHexStr(md.digest());
     }
 } 
