@@ -2,20 +2,20 @@ package org.kostiskag.unitynetwork.common.table;
 
 import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class NodeTable<N extends NodeEntry> {
     protected static final int TIMEOUT_SECONDS = 5;
-    protected final List<N> list;
+    protected final Set<N> nodes;
     protected final Lock orb = new ReentrantLock(true);
 
     protected NodeTable() {
-        list = new ArrayList<N>();
+        nodes = new TreeSet<N>((a, b) -> a.compareTo(b));
     }
 
     /**
@@ -86,19 +86,19 @@ public class NodeTable<N extends NodeEntry> {
     //accessors!
     public int getSize(Lock lock) throws InterruptedException {
         validateLock(lock);
-        return list.size();
+        return nodes.size();
     }
 
     public Optional<N> getOptionalNodeEntry(Lock lock, N toBeChecked) throws InterruptedException {
         validateLock(lock);
-        return list.stream()
+        return nodes.stream()
                 .filter(n -> n.equals(toBeChecked))
                 .findFirst();
     }
 
     public Optional<N> getOptionalNodeEntry(Lock lock, String hostname) throws InterruptedException {
         validateLock(lock);
-        return list.stream()
+        return nodes.stream()
                 .filter(n -> n.getHostname().equals(hostname))
                 .findFirst();
     }

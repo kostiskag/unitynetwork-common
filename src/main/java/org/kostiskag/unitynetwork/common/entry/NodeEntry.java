@@ -4,15 +4,16 @@ import org.kostiskag.unitynetwork.common.address.NetworkAddress;
 import org.kostiskag.unitynetwork.common.address.PhysicalAddress;
 import org.kostiskag.unitynetwork.common.address.VirtualAddress;
 import org.kostiskag.unitynetwork.common.calculated.NumericConstraints;
+import org.kostiskag.unitynetwork.common.utilities.FixedDate;
 
 import java.sql.Time;
 
-public class NodeEntry<A extends NetworkAddress> {
+public class NodeEntry<A extends NetworkAddress> implements Comparable<NodeEntry>{
 
     private final String hostname;
     private final A address;
     private final Object timeLock = new Object();
-    private Time regTimestamp;
+    private FixedDate regTimestamp;
 
     public NodeEntry(String hostname, A address) throws IllegalAccessException {
         if (hostname == null || address == null) {
@@ -25,7 +26,7 @@ public class NodeEntry<A extends NetworkAddress> {
         }
         this.hostname = hostname;
         this.address = address;
-        this.regTimestamp = new Time(System.currentTimeMillis());
+        this.regTimestamp = new FixedDate();
     }
 
     public String getHostname() {
@@ -36,7 +37,7 @@ public class NodeEntry<A extends NetworkAddress> {
         return address;
     }
 
-    public Time getTimestamp() {
+    public FixedDate getTimestamp() {
         synchronized (timeLock) {
             return regTimestamp;
         }
@@ -44,7 +45,12 @@ public class NodeEntry<A extends NetworkAddress> {
 
     public void updateTimestamp() {
         synchronized (timeLock) {
-            this.regTimestamp = new Time(System.currentTimeMillis());
+            this.regTimestamp = new FixedDate();
         }
+    }
+
+    @Override
+    public int compareTo(NodeEntry o) {
+        return this.getHostname().compareTo(o.getHostname());
     }
 }
