@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 
 import java.net.UnknownHostException;
 import java.sql.Time;
+import java.util.Date;
 
 import org.kostiskag.unitynetwork.common.address.NetworkAddress;
 import org.kostiskag.unitynetwork.common.address.PhysicalAddress;
@@ -87,10 +88,10 @@ public class NodeEntryTest {
 
 	@Test
 	public void testUpdateTimestamp() throws IllegalAccessException, InterruptedException, UnknownHostException {
-		Time t = new Time(System.currentTimeMillis());
+		Date t = new Date();
 		Thread.sleep(1000);
 		NodeEntry<VirtualAddress> n = new NodeEntry<>("ouiou", VirtualAddress.valueOf("10.0.0.1"));
-		Time oldt = n.getTimestamp();
+		Date oldt = n.getTimestamp().asDate();
 		Thread.sleep(1000);
 		n.updateTimestamp();
 
