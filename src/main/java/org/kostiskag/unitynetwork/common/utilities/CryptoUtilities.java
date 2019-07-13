@@ -32,12 +32,27 @@ public class CryptoUtilities {
 
 	public static final String SALT = "=UrBN&RLJ=dBshBX3HFn!S^Au?yjqV8MBx7fMyg5p6U8T^%2kp^X-sk9EQeENgVEj%DP$jNnz&JeF?rU-*meW5yFkmAvYW_=mA+E$F$xwKmw=uSxTdznSTbunBKT*-&!";
 
-	public static String storagePasswordAlgorithm(String password) throws GeneralSecurityException {
+	public static String hashedPasswordAlgorithm(String plainPassword) throws GeneralSecurityException {
 		try {
-			return HashUtilities.SHA256(CryptoUtilities.SALT + password);
+			return HashUtilities.SHA256(CryptoUtilities.SALT + plainPassword);
 		} catch (GeneralSecurityException e) {
 			throw e;
 		}
+	}
+
+	public static String validatePasswordAlgorithm(String username, String hashedPassword) throws GeneralSecurityException {
+		try {
+			String data = HashUtilities.SHA256(CryptoUtilities.SALT) +
+					HashUtilities.SHA256(username) +
+					hashedPassword;
+			return HashUtilities.SHA256(data);
+		} catch (GeneralSecurityException e) {
+			throw e;
+		}
+	}
+
+	public static String transmitPasswordAlgorithm(String username, String plainPassword) throws GeneralSecurityException {
+		return validatePasswordAlgorithm(username, hashedPasswordAlgorithm(plainPassword));
 	}
 
 	/**

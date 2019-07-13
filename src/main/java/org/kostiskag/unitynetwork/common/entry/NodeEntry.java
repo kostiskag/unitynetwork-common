@@ -51,6 +51,9 @@ public class NodeEntry<A extends NetworkAddress> implements Comparable<NodeEntry
 
     @Override
     public int compareTo(NodeEntry o) {
+        if (this.address.equals(o.address)) {
+            return 0;
+        }
         return this.getHostname().compareTo(o.getHostname());
     }
 }
