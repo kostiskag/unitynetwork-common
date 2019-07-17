@@ -2,10 +2,9 @@ package org.kostiskag.unitynetwork.common.service;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class SimpleCyclicService extends Thread {
+public abstract class SimpleCyclicService extends SimpleUnstoppedCyclicService {
 
     private final int time;
-    private final AtomicBoolean kill = new AtomicBoolean(false);
 
     protected SimpleCyclicService(int timeInSec) throws IllegalAccessException {
         if (timeInSec <= 0) {
@@ -15,28 +14,16 @@ public abstract class SimpleCyclicService extends Thread {
     }
 
     @Override
-    public final void run() {
-        preActions();
-        while (!kill.get()) {
-            try {
-                sleep(time);
-            } catch (InterruptedException ex) {
-                interruptedMessage(ex);
-            } finally {
-                if (kill.get()) break;
-            }
-            cyclicPayload();
+    protected final void cyclicActions() {
+        try {
+            sleep(time);
+        } catch (InterruptedException ex) {
+            interruptedMessage(ex);
+        } finally {
+            if (getKillValue()) return;
         }
-        postActions();
+        cyclicPayload();
     }
-
-    public final void kill(){
-        kill.set(true);
-    }
-
-    protected abstract void preActions();
-
-    protected abstract void postActions();
 
     protected abstract void interruptedMessage(InterruptedException ex);
 
