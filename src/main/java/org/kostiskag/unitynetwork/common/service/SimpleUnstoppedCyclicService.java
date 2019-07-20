@@ -17,7 +17,7 @@ public abstract class SimpleUnstoppedCyclicService extends Thread {
         postActions();
     }
 
-    public final void kill(){
+    public void kill(){
         kill.set(true);
     }
 
