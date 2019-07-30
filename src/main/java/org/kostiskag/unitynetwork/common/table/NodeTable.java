@@ -3,6 +3,7 @@ package org.kostiskag.unitynetwork.common.table;
 import org.kostiskag.unitynetwork.common.address.NetworkAddress;
 import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,6 +18,11 @@ public class NodeTable<N extends NodeEntry> {
 
     protected NodeTable() {
         nodes = new TreeSet<N>((a, b) -> a.compareTo(b));
+    }
+
+    protected NodeTable(Collection<N> in) {
+        nodes = new TreeSet<N>((a, b) -> a.compareTo(b));
+        nodes.addAll(in);
     }
 
     /**
