@@ -1,5 +1,6 @@
 package org.kostiskag.unitynetwork.common.table;
 
+import org.kostiskag.unitynetwork.common.address.NetworkAddress;
 import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
 import java.util.Optional;
@@ -100,6 +101,13 @@ public class NodeTable<N extends NodeEntry> {
         validateLock(lock);
         return nodes.stream()
                 .filter(n -> n.getHostname().equals(hostname))
+                .findFirst();
+    }
+
+    public Optional<N> getOptionalNodeEntry(Lock lock, NetworkAddress address) throws InterruptedException {
+        validateLock(lock);
+        return nodes.stream()
+                .filter(n -> n.getAddress().equals(address))
                 .findFirst();
     }
 
