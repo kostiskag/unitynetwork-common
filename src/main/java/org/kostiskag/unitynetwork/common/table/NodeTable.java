@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Stream;
 
 public class NodeTable<N extends NodeEntry> {
     protected static final int TIMEOUT_SECONDS = 5;
@@ -94,6 +95,10 @@ public class NodeTable<N extends NodeEntry> {
     public int getSize(Lock lock) throws InterruptedException {
         validateLock(lock);
         return nodes.size();
+    }
+
+    protected Stream<N> getStream() {
+        return nodes.stream();
     }
 
     public Optional<N> getOptionalNodeEntry(Lock lock, N toBeChecked) throws InterruptedException {
