@@ -2,6 +2,7 @@ package org.kostiskag.unitynetwork.common.routing.packet;
 
 import org.kostiskag.unitynetwork.common.utilities.HashUtilities;
 
+import java.io.IOException;
 import java.net.InetAddress;
 
 /**
@@ -25,7 +26,7 @@ public class IPv4Packet {
         return false;
     }    
     
-    public static InetAddress getSourceAddress(byte[] packet) throws Exception {
+    public static InetAddress getSourceAddress(byte[] packet) throws IOException {
         if (isIPv4(packet)) {
 	    	byte[] addr = new byte[4];
 	        for (int i=0; i<4; i++){
@@ -33,10 +34,10 @@ public class IPv4Packet {
 	        }
 	        return InetAddress.getByAddress(addr);
         }
-        throw new Exception ("This is not an IPv4 packet.");
+        throw new IOException ("This is not an IPv4 packet.");
     }
 
-    public static InetAddress getDestAddress(byte[] packet) throws Exception {
+    public static InetAddress getDestAddress(byte[] packet) throws IOException {
     	if (isIPv4(packet)) {
 	    	byte[] addr = new byte[4];
 	        for (int i=0; i<4; i++){
@@ -44,7 +45,7 @@ public class IPv4Packet {
 	        }
 	        return InetAddress.getByAddress(addr);
     	}
-    	throw new Exception ("This is not an IPv4 packet.");
+    	throw new IOException ("This is not an IPv4 packet.");
     }
 }
 
