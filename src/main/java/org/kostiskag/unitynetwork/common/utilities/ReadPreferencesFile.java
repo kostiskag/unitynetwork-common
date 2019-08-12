@@ -22,7 +22,7 @@ public class ReadPreferencesFile {
 		cfg = readPreferencesFile(file.toPath());
 	}
 
-	protected static Properties readPreferencesFile(Path filePath) throws IOException {
+	public static Properties readPreferencesFile(Path filePath) throws IOException {
 		var prop = new Properties();
 		try(var fileIn = Files.newInputStream(filePath, StandardOpenOption.READ)) {
 			prop.load(fileIn);
@@ -31,11 +31,11 @@ public class ReadPreferencesFile {
 	}
 
 	@Deprecated
-	protected static void generateFile(File file, Supplier<String> supp) throws IOException {
+	public static void generateFile(File file, Supplier<String> supp) throws IOException {
 		generateFile(file.toPath(), supp);
 	}
 
-	protected static void generateFile(Path filePath, Supplier<String> supp) throws IOException {
+	public static void generateFile(Path filePath, Supplier<String> supp) throws IOException {
 		try (PrintWriter writer = new PrintWriter(Files.newOutputStream(filePath, StandardOpenOption.WRITE))) {
 			writer.print(supp.get());
 		};
