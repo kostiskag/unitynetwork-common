@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
+import org.kostiskag.unitynetwork.common.calculated.DirtyAddress;
 import org.kostiskag.unitynetwork.common.calculated.NumericConstraints;
 
 public class NetworkAddress {
@@ -18,39 +19,48 @@ public class NetworkAddress {
     private final byte[] asByte;
     private final InetAddress asInet;
 
-    protected NetworkAddress(String address) throws UnknownHostException {
+    protected NetworkAddress(String fromString) throws UnknownHostException {
         //sanitation here
-        this.asInet = NetworkAddress.networkAddressToInetAddress(address);
-        this.asString = address;
+        this.asInet = NetworkAddress.networkAddressToInetAddress(fromString);
+        this.asString = fromString;
         this.asByte = asInet.getAddress();
     }
 
-    protected NetworkAddress(InetAddress asInet) throws UnknownHostException {
-        if (asInet == null) {
+    protected NetworkAddress(InetAddress fromInet) throws UnknownHostException {
+        if (fromInet == null) {
             throw new UnknownHostException("null inet given.");
         }
 
-        this.asString = asInet.getHostAddress();
+        this.asString = fromInet.getHostAddress();
 
         if (!NetworkAddress.validate(asString)) {
             throw new UnknownHostException("the given ip is invalid");
         }
 
-        this.asInet = asInet;
-        this.asByte = asInet.getAddress();
+        this.asInet = fromInet;
+        this.asByte = fromInet.getAddress();
     }
 
-    protected NetworkAddress(String asString, byte[] asByte, InetAddress asInet) throws UnknownHostException {
-        if (!NetworkAddress.validate(asString)) {
+    protected NetworkAddress(byte[] fromByte) throws UnknownHostException {
+        if (DirtyAddress.isADirtyAddress(fromByte)) {
+            throw new UnknownHostException("dirty address given!");
+        }
+        this.asByte = fromByte;
+        this.asInet = InetAddress.getByAddress(fromByte);
+        this.asString = this.asInet.getHostAddress();
+    }
+
+    protected NetworkAddress(String fromString, byte[] fromByte, InetAddress fromInet) throws UnknownHostException {
+        if (!NetworkAddress.validate(fromString)) {
             throw new UnknownHostException("the given ip is invalid");
         }
-        if (!asInet.getHostAddress().equals(asString) || !Arrays.equals(asInet.getAddress(), asByte)) {
+        if (!fromInet.getHostAddress().equals(fromString) || !Arrays.equals(fromInet.getAddress(), fromByte)) {
             throw new UnknownHostException("The network address was broken by its instantiation!");
         }
 
-        this.asString = asString;
-        this.asByte = asByte;
-        this.asInet = asInet;
+        this.asString = fromString;
+        this.asByte = fromByte;
+        this.asInet = fromInet;
     }
 
     public String asString() {

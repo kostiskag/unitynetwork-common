@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Objects;
 
+import org.kostiskag.unitynetwork.common.calculated.DirtyAddress;
 import org.kostiskag.unitynetwork.common.calculated.NumericConstraints;
 
 /**
@@ -15,12 +16,19 @@ public final class VirtualAddress extends NetworkAddress{
 
     private final int asInt;
 
-    private VirtualAddress(String asString, byte[] asByte, InetAddress asInet, int asInt) throws UnknownHostException {
-        super(asString,asByte,asInet);
-        if (!asString.startsWith(VIRTUAL_ADDRESS_PREFIX)) {
+    private VirtualAddress(String asString, byte[] fromByte, InetAddress fromInet, int fromInt) throws UnknownHostException {
+        super(asString,fromByte,fromInet);
+        this.asInt = fromInt;
+    }
+
+    public static VirtualAddress valueOf(byte[] fromByte) throws UnknownHostException {
+        if(DirtyAddress.isADirtyVirtualAddress(fromByte)) {
             throw new UnknownHostException("The given ip address is not a part of the virtual network");
         }
-        this.asInt = asInt;
+        int asInt = VirtualAddress.byteTo10IpAddrNumber(fromByte);
+        InetAddress asInet = VirtualAddress._10IpByteToInetAddress(fromByte);
+        String asString = asInet.getHostAddress();
+        return new VirtualAddress(asString, fromByte, asInet, asInt);
     }
 
     /**
