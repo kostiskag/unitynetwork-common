@@ -2,6 +2,7 @@ package org.kostiskag.unitynetwork.common.calculated;
 
 public enum NumericConstraints {
 
+    IP_ADDRESS_LENGTH_IN_BYTES(4),
     // sometimes the user has to provide an input
     // these are the user input max sizes
     MAX_INT_STR(String.valueOf(Integer.MAX_VALUE).length()),
