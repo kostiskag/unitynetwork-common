@@ -45,21 +45,21 @@ import java.net.InetAddress;
  */
 public class UnityPacket {
 
-	private static final int UNITYversion = 0;
-	private static final int MIN_LEN = 2;
+	private static final byte UNITYversion = 0;
+	private static final byte MIN_LEN = 2;
 	
-	private static final int KEEP_ALIVE = 0;
-	private static final int UPING = 1;
-	private static final int DPING = 2;
-	private static final int ACK_S = 3;
-	private static final int ACK_L = 4;
-	private static final int MESSAGE = 5;
+	private static final byte KEEP_ALIVE = 0;
+	private static final byte UPING = 1;
+	private static final byte DPING = 2;
+	private static final byte ACK_S = 3;
+	private static final byte ACK_L = 4;
+	private static final byte MESSAGE = 5;
 	
 	private static final byte[] noPayload = new byte[]{};
 	
 	public static boolean isUnity(byte[] packet) {
 		if (packet.length >= MIN_LEN) {
-			int version = (int) packet[0];
+			var version = packet[0];
 			if (version == UNITYversion) {
 				return true;
 			}
@@ -94,7 +94,7 @@ public class UnityPacket {
     public static boolean isDping(byte[] packet) {
     	if (packet != null) {
     		if (packet.length == 2) {
-		    	int code = (int) packet[1];
+		    	var code = packet[1];
 				if (code == DPING) {
 					return true;
 				}
@@ -106,7 +106,7 @@ public class UnityPacket {
     public static boolean isLongRoutedAck(byte[] packet) {
     	if (packet != null) {
 	    	if (packet.length == 12) {
-		    	int code = (int) packet[1];
+		    	var code = packet[1];
 				if (code == ACK_L) {
 					return true;
 				}
@@ -118,7 +118,7 @@ public class UnityPacket {
     public static boolean isShortRoutedAck(byte[] packet) {
     	if (packet != null) {
 	    	if (packet.length == 4) {
-		    	int code = (int) packet[1];
+		    	var code = packet[1];
 				if (code == ACK_S) {
 					return true;
 				}
