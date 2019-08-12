@@ -14,6 +14,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.*;
 import java.util.Base64;
 
@@ -178,18 +182,28 @@ public class CryptoUtilities {
 		return Base64.getDecoder().decode(base64Str.getBytes());
 	}
 
+	@Deprecated
 	public static <A> void objectToFile(A obj, File file) throws IOException {
-		try (FileOutputStream fileOut = new FileOutputStream(file);
-			 ObjectOutputStream out = new ObjectOutputStream(fileOut)) {
+		objectToFile(obj, file.toPath());
+	}
+
+	public static <A> void objectToFile(A obj, Path filePath) throws IOException {
+		try (var fileOut = Files.newOutputStream(filePath, StandardOpenOption.WRITE);
+			 var out = new ObjectOutputStream(fileOut)) {
 			out.writeObject(obj);
 		} catch (IOException e) {
 			throw e;
 		}
 	}
 
+	@Deprecated
 	public static <A> A fileToObject(File file) throws GeneralSecurityException, IOException {
-		try (FileInputStream fileIn = new FileInputStream(file);
-			 ObjectInputStream in = new ObjectInputStream(fileIn)) {
+		return fileToObject(file.toPath());
+	}
+
+	public static <A> A fileToObject(Path filePath) throws GeneralSecurityException, IOException {
+		try (var fileIn = Files.newInputStream(filePath, StandardOpenOption.READ);
+			 var in = new ObjectInputStream(fileIn)) {
 			return (A) in.readObject(); //It seems i cant avoid casting...
 		} catch (ClassNotFoundException e) {
 			throw new GeneralSecurityException(e);
