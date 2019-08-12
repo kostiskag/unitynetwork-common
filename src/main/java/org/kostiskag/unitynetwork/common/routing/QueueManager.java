@@ -8,10 +8,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Konstantinos Kagiampakis
  */
-public final class QueueManager {
+public final class QueueManager<E> {
 	private final int maxCapacity;
 	private final int maxWaitTime;
-	private final Queue<byte[]> queue;
+	private final Queue<E> queue;
 	private final AtomicBoolean kill = new AtomicBoolean(false);
 	
 	/**
@@ -52,7 +52,7 @@ public final class QueueManager {
 	 * 
 	 * @param data
 	 */
-	public synchronized void offer(byte[] data) {
+	public synchronized void offer(E data) {
 		while (queue.size() == maxCapacity && !kill.get()) {
 			try {
 				wait();
@@ -73,7 +73,7 @@ public final class QueueManager {
 	 * 
 	 * @return
 	 */
-	public synchronized void offerNoWait(byte[] data) {
+	public synchronized void offerNoWait(E data) {
 		if (queue.size() < maxCapacity) {
 			queue.add(data);
 			notify();
@@ -91,7 +91,7 @@ public final class QueueManager {
 	 * 
 	 * @return
 	 */
-	public synchronized byte[] peek() {
+	public synchronized E peek() {
 		while (queue.isEmpty() && !kill.get()) {
 			try {
 				wait();
@@ -102,11 +102,11 @@ public final class QueueManager {
 		if (kill.get()) {
 			return null;
 		}
-		byte[] data = queue.peek();
+		E data = queue.peek();
 		return data;
 	}
 	
-	public synchronized byte[] poll() {
+	public synchronized E poll() {
 		while (queue.isEmpty() && !kill.get()) {
 			try {
 				wait();
@@ -119,12 +119,12 @@ public final class QueueManager {
 			return null;
 		}
 
-		byte[] data = queue.poll();
+		E data = queue.poll();
 		notify();
 		return data;
 	}
 	
-	public synchronized byte[] pollWithTimeout() throws Exception {
+	public synchronized E pollWithTimeout() throws Exception {
 		while (queue.isEmpty() && !kill.get()) {
 			try {
 				wait(maxWaitTime);
@@ -140,7 +140,7 @@ public final class QueueManager {
 			return null;
 		}
 
-		byte[] data = queue.poll();
+		E data = queue.poll();
 		notify();
 		return data;
 	}
