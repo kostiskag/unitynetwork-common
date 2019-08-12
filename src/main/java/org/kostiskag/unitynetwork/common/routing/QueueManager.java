@@ -1,16 +1,18 @@
 package org.kostiskag.unitynetwork.common.routing;
 
 import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
  * @author Konstantinos Kagiampakis
  */
-public class QueueManager extends Thread {
+public final class QueueManager {
 	private final int maxCapacity;
 	private final int maxWaitTime;
-	private final LinkedList<byte[]> queue;
+	private final Queue<byte[]> queue;
 	private final AtomicBoolean kill = new AtomicBoolean(false);
 	
 	/**
@@ -23,7 +25,7 @@ public class QueueManager extends Thread {
 	public QueueManager(int maxCapacity, int maxWaitTimeSec) {
 		this.maxCapacity = maxCapacity;
 		this.maxWaitTime = maxWaitTimeSec * 1000;
-		queue = new LinkedList<byte[]>();
+		this.queue = new PriorityQueue();
 	}
 
 	public synchronized int getlen() {
@@ -52,15 +54,14 @@ public class QueueManager extends Thread {
 	 * @param data
 	 */
 	public synchronized void offer(byte[] data) {
-		boolean kill = this.kill.get();
-		while (queue.size() == maxCapacity && !kill) {
+		while (queue.size() == maxCapacity && !kill.get()) {
 			try {
 				wait();
 			} catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
-		if (kill) {
+		if (kill.get()) {
 			return;
 		}
 		queue.add(data);
@@ -156,5 +157,4 @@ public class QueueManager extends Thread {
 		notifyAll();
 	}
 
-	
 }
