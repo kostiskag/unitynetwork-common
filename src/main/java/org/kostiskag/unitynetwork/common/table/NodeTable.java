@@ -1,13 +1,16 @@
 package org.kostiskag.unitynetwork.common.table;
 
+import org.kostiskag.unitynetwork.common.address.NetworkAddress;
 import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Stream;
 
 public class NodeTable<N extends NodeEntry> {
     protected static final int TIMEOUT_SECONDS = 5;
@@ -16,6 +19,11 @@ public class NodeTable<N extends NodeEntry> {
 
     protected NodeTable() {
         nodes = new TreeSet<N>((a, b) -> a.compareTo(b));
+    }
+
+    protected NodeTable(Collection<N> in) {
+        nodes = new TreeSet<N>((a, b) -> a.compareTo(b));
+        nodes.addAll(in);
     }
 
     /**
@@ -89,6 +97,10 @@ public class NodeTable<N extends NodeEntry> {
         return nodes.size();
     }
 
+    protected Stream<N> getStream() {
+        return nodes.stream();
+    }
+
     public Optional<N> getOptionalNodeEntry(Lock lock, N toBeChecked) throws InterruptedException {
         validateLock(lock);
         return nodes.stream()
@@ -100,6 +112,13 @@ public class NodeTable<N extends NodeEntry> {
         validateLock(lock);
         return nodes.stream()
                 .filter(n -> n.getHostname().equals(hostname))
+                .findFirst();
+    }
+
+    public Optional<N> getOptionalNodeEntry(Lock lock, NetworkAddress address) throws InterruptedException {
+        validateLock(lock);
+        return nodes.stream()
+                .filter(n -> n.getAddress().equals(address))
                 .findFirst();
     }
 
