@@ -1,6 +1,8 @@
 package org.kostiskag.unitynetwork.common.table;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.TreeSet;
 import java.util.concurrent.locks.Lock;
 
 import org.kostiskag.unitynetwork.common.address.NetworkAddress;
@@ -8,6 +10,10 @@ import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
 
 public abstract class NodeTable<N extends NodeEntry> extends PlainTable<N> {
+
+    public NodeTable(Collection<N> in) {
+        super(in);
+    }
 
     public Optional<N> getOptionalNodeEntry(Lock lock, String hostname) throws InterruptedException {
         validateLock(lock);
