@@ -25,7 +25,7 @@ public class NodeTableTest {
 
     @Test
     public void initTest() {
-        PlainTable<NodeEntry> nt3 = new NodeTable<>() {
+        PlainTable<NodeEntry> nt3 = new PlainTable<NodeEntry>() {
 
         };
     }
