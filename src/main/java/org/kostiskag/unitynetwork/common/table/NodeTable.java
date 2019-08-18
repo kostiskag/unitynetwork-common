@@ -11,6 +11,9 @@ import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
 public abstract class NodeTable<N extends NodeEntry> extends PlainTable<N> {
 
+    public NodeTable() {
+    }
+
     public NodeTable(Collection<N> in) {
         super(in);
     }
