@@ -6,7 +6,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kostiskag.unitynetwork.common.entry.NodeEntry;
 
-public class NodeTableTest {
+import static org.junit.Assert.assertEquals;
+
+public class PlainTableTest {
 
     @BeforeClass
     public static void beforeClass() {
@@ -25,7 +27,7 @@ public class NodeTableTest {
 
     @Test
     public void initTest() {
-        PlainTable<NodeEntry> nt3 = new NodeTable<>() {
+        PlainTable<NodeEntry> nt3 = new PlainTable<>() {
 
         };
     }
