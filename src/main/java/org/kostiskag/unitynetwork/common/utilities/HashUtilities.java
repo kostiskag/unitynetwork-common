@@ -39,7 +39,11 @@ public class HashUtilities {
     }
     
     public static int bytesToUnsignedInt(byte[] data) {
-    	return new BigInteger(1, data).intValue(); 
+    	return new BigInteger(1, data).intValue();
+    }
+
+    public static short bytesToUnsignedShort(byte[] data) {
+        return new BigInteger(1, data).shortValue();
     }
     
     public static byte[] unsignedIntTo4ByteArray(int num) {
