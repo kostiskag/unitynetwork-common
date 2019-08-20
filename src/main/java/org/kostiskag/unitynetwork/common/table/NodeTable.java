@@ -48,4 +48,21 @@ public abstract class NodeTable<A extends NetworkAddress, N extends NodeEntry<A>
         }
         throw new IllegalAccessException("the given node was not found on table "+hostname);
     }
+
+    @Deprecated
+    @Locking(LockingScope.EXTERNAL)
+    public final boolean isOnline(Lock lock, A address) throws InterruptedException {
+        return getOptionalNodeEntry(lock, address).isPresent();
+    }
+
+    @Deprecated
+    @Locking(LockingScope.EXTERNAL)
+    public final N getNodeEntry(Lock lock, A address) throws InterruptedException, IllegalAccessException {
+        validateLock(lock);
+        Optional<N> n = getOptionalNodeEntry(lock, address);
+        if (n.isPresent()) {
+            return n.get();
+        }
+        throw new IllegalAccessException("the given node address was not found on table "+address.asString());
+    }
 }
