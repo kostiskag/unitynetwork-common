@@ -68,7 +68,7 @@ import java.util.stream.Stream;
  *
  * @param <E> the elements of this Table should implement Comparable!
  */
-public abstract class PlainTable<E extends Comparable> implements AutoCloseable {
+public abstract class PlainTable<E extends Comparable> {
     protected static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
     protected static final int TIMEOUT_SECONDS = 5;
 
@@ -108,16 +108,6 @@ public abstract class PlainTable<E extends Comparable> implements AutoCloseable 
     }
 
     /**
-     * To be used with a try with resources block
-     *
-     * @throws Exception
-     */
-    @Override
-    public final void close() throws Exception {
-        releaseLock();
-    }
-
-    /**
      * To be called by all inner methods
      * Ensures the lock is called before attempting to call a method
      *
@@ -125,7 +115,7 @@ public abstract class PlainTable<E extends Comparable> implements AutoCloseable 
      * @throws InterruptedException
      */
     protected final void validateLock(Lock lock) throws InterruptedException {
-        if (lock.equals(orb)) {
+        if (orb != lock) {
             throw new InterruptedException("the given lock is not the BNtable's orb!");
         }
     }
