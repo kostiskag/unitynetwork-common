@@ -37,7 +37,7 @@ public abstract class NodeTable<A extends NetworkAddress, N extends NodeEntry<A>
 
     @Deprecated
     @Locking(LockingScope.EXTERNAL)
-    public final boolean isOnline(Lock lock, String hostname) throws InterruptedException {
+    public final boolean checkEntry(Lock lock, String hostname) throws InterruptedException {
         return getOptionalEntry(lock, hostname).isPresent();
     }
 
@@ -65,7 +65,7 @@ public abstract class NodeTable<A extends NetworkAddress, N extends NodeEntry<A>
 
     @Deprecated
     @Locking(LockingScope.EXTERNAL)
-    public final boolean isOnline(Lock lock, A address) throws InterruptedException {
+    public final boolean checkEntry(Lock lock, A address) throws InterruptedException {
         return getOptionalEntry(lock, address).isPresent();
     }
 }
