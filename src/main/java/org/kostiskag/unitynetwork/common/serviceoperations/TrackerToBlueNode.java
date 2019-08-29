@@ -4,7 +4,8 @@ public enum  TrackerToBlueNode {
 
     CHECK_IF_ALIVE("CHECK"),
     KILLING_SIGNAL("KILLSIG"),
-    GET_ALL_LEASED_REDNODES("GETREDNODES");
+    GET_ALL_LEASED_REDNODES("GETREDNODES"),
+    WRONG_OPTION("WRONG_COMMAND");
 
     private String val;
 
